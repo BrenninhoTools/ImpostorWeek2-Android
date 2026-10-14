@@ -165,7 +165,10 @@
 	<haxedef name="NG_LOGIN" if="newgrounds" />
 
 	<section if="android">
+		<architecture name="arm64" />
 		<architecture exclude="armv7" />
+		<architecture exclude="x86" />
+		<architecture exclude="x64" />
 		<config:android target-sdk-version="35" />
 		<config:android minimum-sdk-version="24" />
 	</section>
