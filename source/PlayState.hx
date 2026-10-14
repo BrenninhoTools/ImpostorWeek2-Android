@@ -2836,8 +2836,11 @@ class PlayState extends MusicBeatState
 			babyArrow.x += 50;
 			babyArrow.x += ((FlxG.width / 2) * player);
 
-			if (PlayStateChangeables.Optimize)
+			if (PlayStateChangeables.Optimize || middleStrums())
 				babyArrow.x -= 275;
+
+			if (player == 0 && middleStrums())
+				babyArrow.visible = false;
 
 			cpuStrums.forEach(function(spr:FlxSprite)
 			{
@@ -2846,6 +2849,11 @@ class PlayState extends MusicBeatState
 
 			strumLineNotes.add(babyArrow);
 		}
+	}
+
+	function middleStrums():Bool
+	{
+		return SONG != null && SONG.song.toLowerCase() == 'defeat' && !executeModchart && !PlayStateChangeables.Optimize;
 	}
 
 	private function appearStaticArrows():Void
