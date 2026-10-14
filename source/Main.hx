@@ -89,12 +89,30 @@ class Main extends Sprite
 
 		fpsCounter = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsCounter);
+
+		#if mobile
+		scaleFPS();
+		Lib.current.stage.addEventListener(Event.RESIZE, function(e:Event) scaleFPS());
+		#end
 		toggleFPS(FlxG.save.data.fps);
 	}
 
 	var game:FlxGame;
 
 	var fpsCounter:FPS;
+
+	#if mobile
+	function scaleFPS():Void
+	{
+		if (fpsCounter == null)
+			return;
+
+		var scale:Float = Math.max(1, Lib.current.stage.stageHeight / 720);
+		fpsCounter.scaleX = fpsCounter.scaleY = scale;
+		fpsCounter.x = 10 * scale;
+		fpsCounter.y = 3 * scale;
+	}
+	#end
 
 	public function toggleFPS(fpsEnabled:Bool):Void {
 		if (fpsCounter != null)

@@ -43,7 +43,7 @@ class KadeEngineData
 			FlxG.save.data.songPosition = false;
 
 		if (FlxG.save.data.fps == null)
-			FlxG.save.data.fps = false;
+			FlxG.save.data.fps = #if mobile true #else false #end;
 
 		if (FlxG.save.data.changedHit == null)
 		{
@@ -132,5 +132,6 @@ class KadeEngineData
 		Main.watermarks = FlxG.save.data.watermark;
 
 		(cast (Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
+		(cast (Lib.current.getChildAt(0), Main)).toggleFPS(FlxG.save.data.fps);
 	}
 }
