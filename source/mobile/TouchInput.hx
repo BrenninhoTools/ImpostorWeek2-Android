@@ -67,6 +67,11 @@ class TouchInput implements IFlxInputManager
 		buttons.remove(button);
 	}
 
+	public static function arrowsMode():Bool
+	{
+		return FlxG.save.data.hitboxMode == 'arrows';
+	}
+
 	public static function hitboxActive():Bool
 	{
 		return hitbox != null && hitbox.exists && hitbox.visible && hitbox.ownerState == topState();
@@ -183,12 +188,9 @@ class TouchInput implements IFlxInputManager
 				if (!touch.pressed || consumed.contains(touch.touchPointID))
 					continue;
 
-				var lane:Int = Std.int(touch.gameX / (FlxG.width / 4));
-				if (lane < 0)
-					lane = 0;
-				if (lane > 3)
-					lane = 3;
-				held[lane] = true;
+				var lane:Int = hitbox.laneAt(touch.gameX, touch.gameY);
+				if (lane >= 0)
+					held[lane] = true;
 			}
 		}
 

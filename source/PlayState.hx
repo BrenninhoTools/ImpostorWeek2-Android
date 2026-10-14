@@ -360,6 +360,11 @@ class PlayState extends MusicBeatState
 		inResults = false;
 
 		PlayStateChangeables.useDownscroll = FlxG.save.data.downscroll;
+
+		#if mobile
+		if (mobile.TouchInput.arrowsMode())
+			PlayStateChangeables.useDownscroll = true;
+		#end
 		PlayStateChangeables.safeFrames = FlxG.save.data.frames;
 		PlayStateChangeables.scrollSpeed = FlxG.save.data.scrollSpeed;
 		PlayStateChangeables.botPlay = FlxG.save.data.botplay;
@@ -2839,8 +2844,13 @@ class PlayState extends MusicBeatState
 			if (PlayStateChangeables.Optimize || middleStrums())
 				babyArrow.x -= 275;
 
-			if (player == 0 && middleStrums())
+			if (player == 0 && hideOpponentStrums())
 				babyArrow.visible = false;
+
+			#if mobile
+			if (player == 1 && mobile.TouchInput.arrowsMode())
+				babyArrow.x = FlxG.width * mobile.Hitbox.arrowPositions[i] - babyArrow.width / 2;
+			#end
 
 			cpuStrums.forEach(function(spr:FlxSprite)
 			{
@@ -2854,6 +2864,15 @@ class PlayState extends MusicBeatState
 	function middleStrums():Bool
 	{
 		return SONG != null && SONG.song.toLowerCase() == 'defeat' && !executeModchart && !PlayStateChangeables.Optimize;
+	}
+
+	function hideOpponentStrums():Bool
+	{
+		#if mobile
+		if (mobile.TouchInput.arrowsMode())
+			return true;
+		#end
+		return middleStrums();
 	}
 
 	private function appearStaticArrows():Void

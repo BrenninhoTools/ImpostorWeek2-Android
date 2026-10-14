@@ -11,7 +11,10 @@ class Hitbox extends FlxSpriteGroup
 {
 	public static var laneColors:Array<FlxColor> = [0xFFC24B99, 0xFF00FFFF, 0xFF12FA05, 0xFFF9393F];
 
+	public static var arrowPositions:Array<Float> = [0.105, 0.296, 0.61, 0.807];
+
 	public var ownerState:FlxState;
+	public var arrows(default, null):Bool = false;
 
 	var lanes:Array<FlxSprite> = [];
 
@@ -34,7 +37,37 @@ class Hitbox extends FlxSpriteGroup
 		}
 
 		scrollFactor.set();
+		arrows = TouchInput.arrowsMode();
 		TouchInput.hitbox = this;
+	}
+
+	public function laneAt(x:Float, y:Float):Int
+	{
+		if (arrows)
+		{
+			if (y < FlxG.height * 0.4)
+				return -1;
+
+			var closest:Int = 0;
+			var closestDistance:Float = Math.POSITIVE_INFINITY;
+			for (i in 0...arrowPositions.length)
+			{
+				var distance:Float = Math.abs(x - FlxG.width * arrowPositions[i]);
+				if (distance < closestDistance)
+				{
+					closestDistance = distance;
+					closest = i;
+				}
+			}
+			return closest;
+		}
+
+		var lane:Int = Std.int(x / (FlxG.width / 4));
+		if (lane < 0)
+			lane = 0;
+		if (lane > 3)
+			lane = 3;
+		return lane;
 	}
 
 	override public function update(elapsed:Float):Void
@@ -43,7 +76,7 @@ class Hitbox extends FlxSpriteGroup
 
 		for (i in 0...lanes.length)
 		{
-			var target:Float = (TouchInput.hitboxHeld[i] && FlxG.save.data.invisibleHitbox != true) ? 0.35 : 0;
+			var target:Float = (TouchInput.hitboxHeld[i] && !arrows && FlxG.save.data.invisibleHitbox != true) ? 0.35 : 0;
 			lanes[i].alpha += (target - lanes[i].alpha) * Math.min(1, elapsed * 20);
 		}
 	}

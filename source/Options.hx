@@ -826,6 +826,27 @@ class InvisibleHitboxOption extends Option
 	}
 }
 
+class HitboxModeOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.hitboxMode = FlxG.save.data.hitboxMode == 'arrows' ? 'lanes' : 'arrows';
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Hitbox Mode " + (FlxG.save.data.hitboxMode == 'arrows' ? "Arrows" : "Four Lanes");
+	}
+}
+
 class UnlockAllOption extends Option
 {
 	var notCompleted:Bool = false;

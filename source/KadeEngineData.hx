@@ -12,6 +12,9 @@ class KadeEngineData
 		if (FlxG.save.data.invisibleHitbox == null)
 			FlxG.save.data.invisibleHitbox = false;
 
+		if (FlxG.save.data.hitboxMode == null)
+			FlxG.save.data.hitboxMode = 'lanes';
+
 		if (FlxG.save.data.unlockAll == null)
 			FlxG.save.data.unlockAll = false;
 
