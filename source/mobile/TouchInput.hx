@@ -39,6 +39,10 @@ class TouchInput implements IFlxInputManager
 		instance = new TouchInput();
 		FlxG.inputs.addInput(instance);
 
+		#if FLX_MOUSE
+		FlxG.mouse.visible = false;
+		#end
+
 		#if android
 		FlxG.android.preventDefaultKeys = [BACK];
 		#end

@@ -140,7 +140,7 @@ class GameplayCustomizeState extends MusicBeatState
         sick.y = FlxG.save.data.changedHitY;
 
 
-        FlxG.mouse.visible = true;
+        FlxG.mouse.visible = #if mobile false #else true #end;
 
         #if mobile
         addBackButton();

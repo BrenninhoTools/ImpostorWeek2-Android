@@ -138,7 +138,7 @@ class ChartingState extends MusicBeatState
 
 		trace(1 > Math.POSITIVE_INFINITY);
 
-		FlxG.mouse.visible = true;
+		FlxG.mouse.visible = #if mobile false #else true #end;
 
 		instance = this;
 
@@ -194,7 +194,7 @@ class ChartingState extends MusicBeatState
 		curRenderedNotes = new FlxTypedGroup<Note>();
 		curRenderedSustains = new FlxTypedGroup<FlxSprite>();
 
-		FlxG.mouse.visible = true;
+		FlxG.mouse.visible = #if mobile false #else true #end;
 		FlxG.save.bind('funkin', 'ninjamuffin99');
 
 		tempBpm = _song.bpm;
