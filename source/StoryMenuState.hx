@@ -336,6 +336,10 @@ class StoryMenuState extends MusicBeatState
 
 		changeWeek();
 
+		#if mobile
+		addBackButton();
+		#end
+
 		super.create();
 	}
 
@@ -394,12 +398,12 @@ class StoryMenuState extends MusicBeatState
 					}
 				}
 
-				if (FlxG.keys.justPressed.UP)
+				if (FlxG.keys.justPressed.UP || mobile.TouchInput.swipeUp)
 				{
 					changeWeek(-1);
 				}
 
-				if (FlxG.keys.justPressed.DOWN)
+				if (FlxG.keys.justPressed.DOWN || mobile.TouchInput.swipeDown)
 				{
 					changeWeek(1);
 				}
@@ -490,17 +494,20 @@ class StoryMenuState extends MusicBeatState
 			PlayState.SONG = Song.loadFromJson(poop, PlayState.storyPlaylist[0]);
 			PlayState.storyWeek = curWeek;
 			PlayState.campaignScore = 0;
-			if (curWeek == 0) {
+			if (curWeek == 0)
+			{
 				new FlxTimer().start(1, function(tmr:FlxTimer)
 				{
-					LoadingState.loadAndSwitchState(new VideoState('assets/videos/moogus/video.webm',new PlayState()));
+					LoadingState.loadAndSwitchState(new VideoState('assets/videos/moogus/video.webm', new PlayState()));
 				});
 			}
-
-			new FlxTimer().start(1, function(tmr:FlxTimer)
+			else
 			{
-				LoadingState.loadAndSwitchState(new PlayState(), true);
-			});
+				new FlxTimer().start(1, function(tmr:FlxTimer)
+				{
+					LoadingState.loadAndSwitchState(new PlayState(), true);
+				});
+			}
 		}
 	}
 

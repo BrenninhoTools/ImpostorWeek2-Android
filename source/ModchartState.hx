@@ -487,22 +487,19 @@ class ModchartState
 				// hud/camera
 
 				Lua_helper.add_callback(lua,"initBackgroundVideo", function(videoName:String) {
-					trace('playing assets/videos/' + videoName + '.webm');
-					PlayState.instance.backgroundVideo("assets/videos/" + videoName + ".webm");
+										PlayState.instance.backgroundVideo("assets/videos/" + videoName + ".webm");
 				});
 
 				Lua_helper.add_callback(lua,"pauseVideo", function() {
-					if (!GlobalVideo.get().paused)
-						GlobalVideo.get().pause();
+					PlayState.instance.pauseVideo();
 				});
 
 				Lua_helper.add_callback(lua,"resumeVideo", function() {
-					if (GlobalVideo.get().paused)
-						GlobalVideo.get().pause();
+					PlayState.instance.resumeVideo();
 				});
 				
 				Lua_helper.add_callback(lua,"restartVideo", function() {
-					GlobalVideo.get().restart();
+					PlayState.instance.restartVideo();
 				});
 
 				Lua_helper.add_callback(lua,"getVideoSpriteX", function() {

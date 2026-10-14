@@ -2,7 +2,7 @@ package;
 import lime.app.Application;
 import openfl.utils.Future;
 import openfl.media.Sound;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 #if sys
 import smTools.SMFile;
 import sys.FileSystem;
@@ -108,11 +108,11 @@ class FreeplayState extends MusicBeatState
 
 
 			#if sys
-			if (FileSystem.exists('assets/data/${format}/${format}-hard.json'))
+			if (chartExists('assets/data/${format}/${format}-hard.json'))
 				diffsThatExist.push("Hard");
-			if (FileSystem.exists('assets/data/${format}/${format}-easy.json'))
+			if (chartExists('assets/data/${format}/${format}-easy.json'))
 				diffsThatExist.push("Easy");
-			if (FileSystem.exists('assets/data/${format}/${format}.json'))
+			if (chartExists('assets/data/${format}/${format}.json'))
 				diffsThatExist.push("Normal");
 
 			if (diffsThatExist.length == 0)
@@ -143,7 +143,8 @@ class FreeplayState extends MusicBeatState
 
 		trace("tryin to load sm files");
 
-		#if sys
+		#if (sys && !mobile)
+		if (FileSystem.exists("assets/sm/"))
 		for(i in FileSystem.readDirectory("assets/sm/"))
 		{
 			trace(i);
@@ -334,7 +335,22 @@ class FreeplayState extends MusicBeatState
 			trace(md);
 		 */
 
+		#if mobile
+		addBackButton();
+		#end
+
 		super.create();
+	}
+
+	static function chartExists(path:String):Bool
+	{
+		#if mobile
+		return openfl.utils.Assets.exists(path);
+		#elseif sys
+		return FileSystem.exists(path);
+		#else
+		return true;
+		#end
 	}
 
 	public function addSong(songName:String, weekNum:Int, songCharacter:String)
@@ -379,9 +395,9 @@ class FreeplayState extends MusicBeatState
 			FlxG.sound.music.volume -= 0.5 * FlxG.elapsed;
 		}
 
-		var upP = FlxG.keys.justPressed.UP;
-		var downP = FlxG.keys.justPressed.DOWN;
-		var accepted = FlxG.keys.justPressed.ENTER;
+		var upP = FlxG.keys.justPressed.UP || mobile.TouchInput.swipeUp;
+		var downP = FlxG.keys.justPressed.DOWN || mobile.TouchInput.swipeDown;
+		var accepted = FlxG.keys.justPressed.ENTER || mobile.TouchInput.tap;
 
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
 
@@ -421,9 +437,9 @@ class FreeplayState extends MusicBeatState
 		//if (FlxG.keys.justPressed.SPACE && !openedPreview)
 			//openSubState(new DiffOverview());
 
-		if (FlxG.keys.justPressed.LEFT)
+		if (FlxG.keys.justPressed.LEFT || mobile.TouchInput.swipeLeft)
 			changeDiff(-1);
-		if (FlxG.keys.justPressed.RIGHT)
+		if (FlxG.keys.justPressed.RIGHT || mobile.TouchInput.swipeRight)
 			changeDiff(1);
 
 		if (controls.BACK)

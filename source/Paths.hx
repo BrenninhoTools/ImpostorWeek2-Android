@@ -131,7 +131,7 @@ class Paths
 	inline static public function getSparrowAtlas(key:String, ?library:String, ?isCharacter:Bool = false)
 	{
 		var usecahce = FlxG.save.data.cacheImages;
-		#if !cpp
+		#if (!cpp || mobile)
 		usecahce = false;
 		#end
 		if (isCharacter)
@@ -158,7 +158,7 @@ class Paths
 	inline static public function getPackerAtlas(key:String, ?library:String, ?isCharacter:Bool = false)
 	{
 		var usecahce = FlxG.save.data.cacheImages;
-		#if !cpp
+		#if (!cpp || mobile)
 		usecahce = false;
 		#end
 		if (isCharacter)

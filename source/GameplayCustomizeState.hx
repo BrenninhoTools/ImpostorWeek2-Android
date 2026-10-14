@@ -116,7 +116,7 @@ class GameplayCustomizeState extends MusicBeatState
 		generateStaticArrows(0);
 		generateStaticArrows(1);
 
-        text = new FlxText(5, FlxG.height + 40, 0, "Click and drag around gameplay elements to customize their positions.\nPress R to reset.\nPress Escape to go back.", 12);
+        text = new FlxText(5, FlxG.height + 40, 0, #if mobile "Drag around gameplay elements to customize their positions.\nTap the back button to go back." #else "Click and drag around gameplay elements to customize their positions.\nPress R to reset.\nPress Escape to go back." #end, 12);
 		text.scrollFactor.set();
 		text.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
         
@@ -142,6 +142,9 @@ class GameplayCustomizeState extends MusicBeatState
 
         FlxG.mouse.visible = true;
 
+        #if mobile
+        addBackButton();
+        #end
     }
 
     override function update(elapsed:Float) {

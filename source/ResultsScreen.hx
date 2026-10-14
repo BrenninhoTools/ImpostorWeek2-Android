@@ -7,7 +7,7 @@ import sys.io.File;
 #end
 import openfl.geom.Matrix;
 import openfl.display.BitmapData;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.util.FlxAxes;
 import flixel.FlxSubState;
 import Options.Option;
@@ -23,7 +23,6 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import io.newgrounds.NG;
 import lime.app.Application;
 import lime.utils.Assets;
 import flixel.math.FlxMath;
@@ -91,7 +90,7 @@ class ResultsScreen extends FlxSubState
         comboText.scrollFactor.set();
         add(comboText);
 
-        contText = new FlxText(FlxG.width - 475,FlxG.height + 50,0,'Press ${KeyBinds.gamepad ? 'A' : 'ENTER'} to continue.');
+        contText = new FlxText(FlxG.width - 475,FlxG.height + 50,0,#if mobile 'Tap to continue.' #else 'Press ${KeyBinds.gamepad ? 'A' : 'ENTER'} to continue.' #end);
         contText.size = 28;
         contText.setBorderStyle(FlxTextBorderStyle.OUTLINE,FlxColor.BLACK,4,1);
         contText.color = FlxColor.WHITE;

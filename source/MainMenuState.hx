@@ -1,6 +1,7 @@
 package;
 
 import flixel.addons.display.FlxBackdrop;
+import flixel.util.FlxAxes;
 import flixel.input.gamepad.FlxGamepad;
 import Controls.KeyboardScheme;
 import flixel.FlxG;
@@ -14,7 +15,6 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import io.newgrounds.NG;
 import lime.app.Application;
 
 #if windows
@@ -77,13 +77,13 @@ class MainMenuState extends MusicBeatState
 			}
 		add(bg);
 
-		starFG = new FlxBackdrop(Paths.image('menuBooba/starFG', 'impostor'), 1, 1, true, true);
+		starFG = new FlxBackdrop(Paths.image('menuBooba/starFG', 'impostor'), XY);
 		starFG.updateHitbox();
 		starFG.antialiasing = true;
 		starFG.scrollFactor.set();
 		add(starFG);
 
-		starBG = new FlxBackdrop(Paths.image('menuBooba/starBG', 'impostor'), 1, 1, true, true);
+		starBG = new FlxBackdrop(Paths.image('menuBooba/starBG', 'impostor'), XY);
 		starBG.updateHitbox();
 		starBG.antialiasing = true;
 		starBG.scrollFactor.set();
@@ -176,6 +176,10 @@ class MainMenuState extends MusicBeatState
 
 		changeItem();
 
+		#if mobile
+		addBackButton();
+		#end
+
 		super.create();
 	}
 
@@ -193,6 +197,25 @@ class MainMenuState extends MusicBeatState
 
 		menuItems.forEach(function(spr:FlxSprite)
 		{
+			#if mobile
+			for (touch in FlxG.touches.list)
+			{
+				if (!canClick || !touch.overlaps(spr, spr.camera))
+					continue;
+
+				if (touch.pressed || touch.justReleased)
+				{
+					curSelected = spr.ID;
+					menuItems.forEach(function(other:FlxSprite)
+					{
+						other.animation.play(other == spr ? 'hover' : 'idle');
+					});
+				}
+
+				if (touch.justReleased)
+					selectSomething();
+			}
+			#else
 			if(usingMouse)
 			{
 				if(!FlxG.mouse.overlaps(spr))
@@ -213,6 +236,7 @@ class MainMenuState extends MusicBeatState
 					selectSomething();
 				}
 			}
+			#end
 
 			starFG.x -= 0.03;
 			starBG.x -= 0.01;

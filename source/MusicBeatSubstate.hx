@@ -49,6 +49,54 @@ class MusicBeatSubstate extends FlxSubState
 		super.update(elapsed);
 	}
 
+	#if mobile
+	public var mobileCamera:flixel.FlxCamera;
+	public var backButton:mobile.MobileButton;
+	public var pauseButton:mobile.MobileButton;
+
+	public function getMobileCamera():flixel.FlxCamera
+	{
+		if (mobileCamera == null)
+			mobileCamera = mobile.MobileButton.createCamera();
+		return mobileCamera;
+	}
+
+	public function addBackButton():mobile.MobileButton
+	{
+		if (backButton == null)
+		{
+			backButton = new mobile.MobileButton(BACK, this);
+			backButton.cameras = [getMobileCamera()];
+			add(backButton);
+		}
+		return backButton;
+	}
+
+	public function addPauseButton():mobile.MobileButton
+	{
+		if (pauseButton == null)
+		{
+			pauseButton = new mobile.MobileButton(PAUSE, this);
+			pauseButton.cameras = [getMobileCamera()];
+			add(pauseButton);
+		}
+		return pauseButton;
+	}
+	#end
+
+	override function destroy()
+	{
+		#if mobile
+		if (mobileCamera != null && FlxG.cameras.list.contains(mobileCamera))
+			FlxG.cameras.remove(mobileCamera);
+		mobileCamera = null;
+		backButton = null;
+		pauseButton = null;
+		#end
+
+		super.destroy();
+	}
+
 	private function updateBeat():Void
 	{
 		lastBeat = curBeat;

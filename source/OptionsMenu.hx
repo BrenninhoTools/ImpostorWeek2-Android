@@ -15,6 +15,7 @@ import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.addons.display.FlxBackdrop;
+import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import lime.utils.Assets;
 
@@ -29,7 +30,9 @@ class OptionsMenu extends MusicBeatState
 
 	var options:Array<OptionCategory> = [
 		new OptionCategory("Gameplay", [
+			#if !mobile
 			new DFJKOption(controls),
+			#end
 			new DownscrollOption("Toggle making the notes scroll down rather than up."),
 			new GhostTapOption("Toggle counting pressing a directional input when no arrow is there as a miss."),
 			new Judgement("Customize your Hit Timings. (LEFT or RIGHT)"),
@@ -38,12 +41,16 @@ class OptionsMenu extends MusicBeatState
 			#end
 			new ScrollSpeedOption("Change your scroll speed. (1 = Chart dependent)"),
 			new AccuracyDOption("Change how accuracy is calculated. (Accurate = Simple, Complex = Milisecond Based)"),
+			#if !mobile
 			new ResetButtonOption("Toggle pressing R to gameover."),
+			#end
 			// new OffsetMenu("Get a note offset based off of your inputs!"),
 			new CustomizeGameplay("Drag and drop gameplay modules to your prefered positions!")
 		]),
 		new OptionCategory("Appearance", [
+			#if !mobile
 			new EditorRes("Not showing the editor grid will greatly increase editor performance"),
+			#end
 			new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
 			new CamZoomOption("Toggle the camera zoom in-game."),
 			new StepManiaOption("Sets the colors of the arrows depending on quantization instead of direction."),
@@ -63,7 +70,9 @@ class OptionsMenu extends MusicBeatState
 			new ScoreScreen("Show the score screen after the end of a song"),
 			new ShowInput("Display every single input on the score screen."),
 			new Optimization("No characters or backgrounds. Just a usual rhythm game layout."),
+			#if !mobile
 			new GraphicLoading("On startup, cache every character. Significantly decrease load times. (HIGH MEMORY)"),
+			#end
 			new BotPlay("Showcase your charts and mods with autoplay.")
 		]),
 		
@@ -99,13 +108,13 @@ class OptionsMenu extends MusicBeatState
 			}
 		add(bg);
 
-		starFG = new FlxBackdrop(Paths.image('menuBooba/starFG', 'impostor'), 1, 1, true, true);
+		starFG = new FlxBackdrop(Paths.image('menuBooba/starFG', 'impostor'), XY);
 		starFG.updateHitbox();
 		starFG.antialiasing = true;
 		starFG.scrollFactor.set();
 		add(starFG);
 
-		starBG = new FlxBackdrop(Paths.image('menuBooba/starBG', 'impostor'), 1, 1, true, true);
+		starBG = new FlxBackdrop(Paths.image('menuBooba/starBG', 'impostor'), XY);
 		starBG.updateHitbox();
 		starBG.antialiasing = true;
 		starBG.scrollFactor.set();
@@ -138,6 +147,10 @@ class OptionsMenu extends MusicBeatState
 
 		FlxTween.tween(versionShit,{y: FlxG.height - 18},2,{ease: FlxEase.elasticInOut});
 		FlxTween.tween(blackBorder,{y: FlxG.height - 18},2, {ease: FlxEase.elasticInOut});
+
+		#if mobile
+		addBackButton();
+		#end
 
 		super.create();
 	}
@@ -187,9 +200,9 @@ class OptionsMenu extends MusicBeatState
 				}
 			}
 			
-			if (FlxG.keys.justPressed.UP)
+			if ((FlxG.keys.justPressed.UP || mobile.TouchInput.swipeUp))
 				changeSelection(-1);
-			if (FlxG.keys.justPressed.DOWN)
+			if ((FlxG.keys.justPressed.DOWN || mobile.TouchInput.swipeDown))
 				changeSelection(1);
 			
 			if (isCat)
@@ -198,16 +211,16 @@ class OptionsMenu extends MusicBeatState
 				{
 					if (FlxG.keys.pressed.SHIFT)
 						{
-							if (FlxG.keys.pressed.RIGHT)
+							if ((FlxG.keys.pressed.RIGHT || mobile.TouchInput.swipeRight))
 								currentSelectedCat.getOptions()[curSelected].right();
-							if (FlxG.keys.pressed.LEFT)
+							if ((FlxG.keys.pressed.LEFT || mobile.TouchInput.swipeLeft))
 								currentSelectedCat.getOptions()[curSelected].left();
 						}
 					else
 					{
-						if (FlxG.keys.justPressed.RIGHT)
+						if ((FlxG.keys.justPressed.RIGHT || mobile.TouchInput.swipeRight))
 							currentSelectedCat.getOptions()[curSelected].right();
-						if (FlxG.keys.justPressed.LEFT)
+						if ((FlxG.keys.justPressed.LEFT || mobile.TouchInput.swipeLeft))
 							currentSelectedCat.getOptions()[curSelected].left();
 					}
 				}
@@ -215,14 +228,14 @@ class OptionsMenu extends MusicBeatState
 				{
 					if (FlxG.keys.pressed.SHIFT)
 					{
-						if (FlxG.keys.justPressed.RIGHT)
+						if ((FlxG.keys.justPressed.RIGHT || mobile.TouchInput.swipeRight))
 							FlxG.save.data.offset += 0.1;
-						else if (FlxG.keys.justPressed.LEFT)
+						else if ((FlxG.keys.justPressed.LEFT || mobile.TouchInput.swipeLeft))
 							FlxG.save.data.offset -= 0.1;
 					}
-					else if (FlxG.keys.pressed.RIGHT)
+					else if ((FlxG.keys.pressed.RIGHT || mobile.TouchInput.swipeRight))
 						FlxG.save.data.offset += 0.1;
-					else if (FlxG.keys.pressed.LEFT)
+					else if ((FlxG.keys.pressed.LEFT || mobile.TouchInput.swipeLeft))
 						FlxG.save.data.offset -= 0.1;
 					
 					versionShit.text = "Offset (Left, Right, Shift for slow): " + HelperFunctions.truncateFloat(FlxG.save.data.offset,2) + " - Description - " + currentDescription;
@@ -236,14 +249,14 @@ class OptionsMenu extends MusicBeatState
 			{
 				if (FlxG.keys.pressed.SHIFT)
 				{
-					if (FlxG.keys.justPressed.RIGHT)
+					if ((FlxG.keys.justPressed.RIGHT || mobile.TouchInput.swipeRight))
 						FlxG.save.data.offset += 0.1;
-					else if (FlxG.keys.justPressed.LEFT)
+					else if ((FlxG.keys.justPressed.LEFT || mobile.TouchInput.swipeLeft))
 						FlxG.save.data.offset -= 0.1;
 				}
-				else if (FlxG.keys.pressed.RIGHT)
+				else if ((FlxG.keys.pressed.RIGHT || mobile.TouchInput.swipeRight))
 					FlxG.save.data.offset += 0.1;
-				else if (FlxG.keys.pressed.LEFT)
+				else if ((FlxG.keys.pressed.LEFT || mobile.TouchInput.swipeLeft))
 					FlxG.save.data.offset -= 0.1;
 				
 				versionShit.text = "Offset (Left, Right, Shift for slow): " + HelperFunctions.truncateFloat(FlxG.save.data.offset,2) + " - Description - " + currentDescription;

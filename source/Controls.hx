@@ -125,77 +125,77 @@ class Controls extends FlxActionSet
 	public var UP(get, never):Bool;
 
 	inline function get_UP()
-		return _up.check();
+		return _up.check() || mobile.TouchInput.hitboxHeld[2];
 
 	public var LEFT(get, never):Bool;
 
 	inline function get_LEFT()
-		return _left.check();
+		return _left.check() || mobile.TouchInput.hitboxHeld[0];
 
 	public var RIGHT(get, never):Bool;
 
 	inline function get_RIGHT()
-		return _right.check();
+		return _right.check() || mobile.TouchInput.hitboxHeld[3];
 
 	public var DOWN(get, never):Bool;
 
 	inline function get_DOWN()
-		return _down.check();
+		return _down.check() || mobile.TouchInput.hitboxHeld[1];
 
 	public var UP_P(get, never):Bool;
 
 	inline function get_UP_P()
-		return _upP.check();
+		return _upP.check() || mobile.TouchInput.swipeUp;
 
 	public var LEFT_P(get, never):Bool;
 
 	inline function get_LEFT_P()
-		return _leftP.check();
+		return _leftP.check() || mobile.TouchInput.swipeLeft;
 
 	public var RIGHT_P(get, never):Bool;
 
 	inline function get_RIGHT_P()
-		return _rightP.check();
+		return _rightP.check() || mobile.TouchInput.swipeRight;
 
 	public var DOWN_P(get, never):Bool;
 
 	inline function get_DOWN_P()
-		return _downP.check();
+		return _downP.check() || mobile.TouchInput.swipeDown;
 
 	public var UP_R(get, never):Bool;
 
 	inline function get_UP_R()
-		return _upR.check();
+		return _upR.check() || mobile.TouchInput.hitboxReleased[2];
 
 	public var LEFT_R(get, never):Bool;
 
 	inline function get_LEFT_R()
-		return _leftR.check();
+		return _leftR.check() || mobile.TouchInput.hitboxReleased[0];
 
 	public var RIGHT_R(get, never):Bool;
 
 	inline function get_RIGHT_R()
-		return _rightR.check();
+		return _rightR.check() || mobile.TouchInput.hitboxReleased[3];
 
 	public var DOWN_R(get, never):Bool;
 
 	inline function get_DOWN_R()
-		return _downR.check();
+		return _downR.check() || mobile.TouchInput.hitboxReleased[1];
 
 	public var ACCEPT(get, never):Bool;
 
 	inline function get_ACCEPT()
-		return _accept.check();
+		return _accept.check() || mobile.TouchInput.tap;
 
 	public var BACK(get, never):Bool;
 
 	inline function get_BACK()
-		return _back.check();
+		return _back.check() || mobile.TouchInput.backPressed;
 
 	public var PAUSE(get, never):Bool;
 
 	inline function get_PAUSE()
-		return _pause.check();
+		return _pause.check() || mobile.TouchInput.pausePressed;
 
 	public var RESET(get, never):Bool;
 

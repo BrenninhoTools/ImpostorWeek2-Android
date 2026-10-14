@@ -15,9 +15,6 @@ import openfl.ui.Keyboard;
 import openfl.events.KeyboardEvent;
 import Replay.Ana;
 import Replay.Analysis;
-#if cpp
-import webm.WebmPlayer;
-#end
 import flixel.input.keyboard.FlxKey;
 import haxe.Exception;
 import openfl.geom.Matrix;
@@ -55,7 +52,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -70,6 +67,10 @@ import lime.utils.Assets;
 import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import flixel.addons.display.FlxBackdrop;
+import flixel.util.FlxAxes;
+#if hxvlc
+import hxvlc.flixel.FlxVideoSprite;
+#end
 import openfl.filters.ShaderFilter;
 #if windows
 import Discord.DiscordClient;
@@ -445,11 +446,9 @@ class PlayState extends MusicBeatState
 		camNotes.bgColor.alpha = 0;
 
 		FlxG.cameras.reset(camGame);
-		FlxG.cameras.add(camHUD);
-		FlxG.cameras.add(camSustains);
-		FlxG.cameras.add(camNotes);
-
-		FlxCamera.defaultCameras = [camGame];
+		FlxG.cameras.add(camHUD, false);
+		FlxG.cameras.add(camSustains, false);
+		FlxG.cameras.add(camNotes, false);
 
 		persistentUpdate = true;
 		persistentDraw = true;
@@ -1292,7 +1291,7 @@ class PlayState extends MusicBeatState
 							farClouds.add(newCloud);								
 						}
 
-						speedLines = new FlxBackdrop(Paths.image('ejected/speedLines', 'impostor'), 1, 1, true, true);
+						speedLines = new FlxBackdrop(Paths.image('ejected/speedLines', 'impostor'), XY);
 						speedLines.antialiasing = true;
 						speedLines.updateHitbox();
 						speedLines.scrollFactor.set(1.3, 1.3);
@@ -1836,6 +1835,14 @@ class PlayState extends MusicBeatState
 
 		trace('starting');
 
+		#if mobile
+		hitbox = new mobile.Hitbox(this);
+		hitbox.cameras = [getMobileCamera()];
+		hitbox.visible = false;
+		add(hitbox);
+		addPauseButton();
+		#end
+
 		if (isStoryMode)
 		{
 			switch (StringTools.replace(curSong, " ", "-").toLowerCase())
@@ -2081,6 +2088,11 @@ class PlayState extends MusicBeatState
 	{
 		inCutscene = false;
 
+		#if mobile
+		if (hitbox != null)
+			hitbox.visible = true;
+		#end
+
 		appearStaticArrows();
 		//generateStaticArrows(0);
 		//generateStaticArrows(1);
@@ -2267,6 +2279,11 @@ class PlayState extends MusicBeatState
 
 	var keys = [false, false, false, false];
 
+	#if mobile
+	var hitbox:mobile.Hitbox;
+	var hitboxWasVisible:Bool = false;
+	#end
+
 	private function releaseInput(evt:KeyboardEvent):Void // handles releases
 	{
 		@:privateAccess
@@ -2295,13 +2312,18 @@ class PlayState extends MusicBeatState
 
 		for (i in 0...binds.length) // binds
 		{
-			if (binds[i].toLowerCase() == key.toLowerCase())
+			if (key != null && binds[i] != null && binds[i].toLowerCase() == key.toLowerCase())
 				data = i;
 		}
 
 		if (data == -1)
 			return;
 
+		onLaneRelease(data);
+	}
+
+	function onLaneRelease(data:Int):Void
+	{
 		keys[data] = false;
 	}
 
@@ -2341,7 +2363,7 @@ class PlayState extends MusicBeatState
 
 		for (i in 0...binds.length) // binds
 		{
-			if (binds[i].toLowerCase() == key.toLowerCase())
+			if (key != null && binds[i] != null && binds[i].toLowerCase() == key.toLowerCase())
 				data = i;
 		}
 		if (data == -1)
@@ -2349,11 +2371,16 @@ class PlayState extends MusicBeatState
 			trace("couldn't find a keybind with the code " + key);
 			return;
 		}
-		if (keys[data])
-		{
-			trace("ur already holding " + key);
+		onLanePress(data);
+	}
+
+	function onLanePress(data:Int):Void
+	{
+		if (PlayStateChangeables.botPlay || loadRep || paused)
 			return;
-		}
+
+		if (keys[data])
+			return;
 
 		keys[data] = true;
 
@@ -2506,7 +2533,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if (useVideo)
-			GlobalVideo.get().resume();
+			resumeVideo();
 
 		#if windows
 		// Updating Discord Rich Presence (with Time Left)
@@ -2837,6 +2864,16 @@ class PlayState extends MusicBeatState
 
 	override function openSubState(SubState:FlxSubState)
 	{
+		#if mobile
+		if (hitbox != null)
+		{
+			hitboxWasVisible = hitbox.visible;
+			hitbox.visible = false;
+		}
+		if (pauseButton != null)
+			pauseButton.visible = false;
+		#end
+
 		if (paused)
 		{
 			if (FlxG.sound.music != null)
@@ -2868,6 +2905,16 @@ class PlayState extends MusicBeatState
 
 	override function closeSubState()
 	{
+		#if mobile
+		if (hitbox != null)
+			hitbox.visible = hitboxWasVisible;
+		if (pauseButton != null)
+			pauseButton.visible = true;
+		for (i in 0...keys.length)
+			if (!mobile.TouchInput.hitboxHeld[i])
+				keys[i] = false;
+		#end
+
 		if (paused)
 		{
 			if (FlxG.sound.music != null && !startingSong)
@@ -2953,6 +3000,19 @@ class PlayState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
+		#if mobile
+		if (!paused && mobile.TouchInput.hitboxActive())
+		{
+			for (i in 0...4)
+			{
+				if (mobile.TouchInput.hitboxPressed[i])
+					onLanePress(i);
+				if (mobile.TouchInput.hitboxReleased[i])
+					onLaneRelease(i);
+			}
+		}
+		#end
+
 		#if !debug
 		perfectMode = false;
 		#end
@@ -3052,9 +3112,9 @@ class PlayState extends MusicBeatState
 		if (PlayStateChangeables.botPlay && FlxG.keys.justPressed.ONE)
 			camHUD.visible = !camHUD.visible;
 
-		if (useVideo && GlobalVideo.get() != null && !stopUpdate)
+		if (useVideo && videoSprite != null && !stopUpdate)
 		{
-			if (GlobalVideo.get().ended && !removedVideo)
+			if (videoEnded && !removedVideo)
 			{
 				remove(videoSprite);
 				FlxG.stage.window.onFocusOut.remove(focusOut);
@@ -3249,7 +3309,7 @@ class PlayState extends MusicBeatState
 		{
 			if (useVideo)
 			{
-				GlobalVideo.get().stop();
+				stopVideo();
 				remove(videoSprite);
 				#if sys
 				FlxG.stage.window.onFocusOut.remove(focusOut);
@@ -3307,7 +3367,7 @@ class PlayState extends MusicBeatState
 		{
 			if (useVideo)
 			{
-				GlobalVideo.get().stop();
+				stopVideo();
 				remove(videoSprite);
 				FlxG.stage.window.onFocusOut.remove(focusOut);
 				FlxG.stage.window.onFocusIn.remove(focusIn);
@@ -4203,7 +4263,7 @@ class PlayState extends MusicBeatState
 		trace('pass event listeners');
 		if (useVideo)
 		{
-			GlobalVideo.get().stop();
+			stopVideo();
 			FlxG.stage.window.onFocusOut.remove(focusOut);
 			FlxG.stage.window.onFocusIn.remove(focusIn);
 			PlayState.instance.remove(PlayState.instance.videoSprite);
@@ -4884,12 +4944,11 @@ class PlayState extends MusicBeatState
 
 	public var fuckingVolume:Float = 1;
 	public var useVideo = false;
-
-	public static var webmHandler:WebmHandler;
+	public var videoEnded = false;
 
 	public var playingDathing = false;
 
-	public var videoSprite:FlxSprite;
+	public var videoSprite:#if hxvlc FlxVideoSprite #else FlxSprite #end;
 
 	public function focusOut()
 	{
@@ -4913,46 +4972,26 @@ class PlayState extends MusicBeatState
 		// nada
 	}
 
-	public function backgroundVideo(source:String) // for background videos
+	public function backgroundVideo(source:String)
 	{
-		#if cpp
+		#if hxvlc
 		useVideo = true;
+		videoEnded = false;
 
 		FlxG.stage.window.onFocusOut.add(focusOut);
 		FlxG.stage.window.onFocusIn.add(focusIn);
 
-		var ourSource:String = "assets/videos/daWeirdVid/dontDelete.webm";
-		//WebmPlayer.SKIP_STEP_LIMIT = 90;
-		var str1:String = "WEBM SHIT";
-		webmHandler = new WebmHandler();
-		webmHandler.source(ourSource);
-		webmHandler.makePlayer();
-		webmHandler.webm.name = str1;
-
-		GlobalVideo.setWebm(webmHandler);
-
-		GlobalVideo.get().source(source);
-		GlobalVideo.get().clearPause();
-		if (GlobalVideo.isWebm)
+		videoSprite = new FlxVideoSprite(-470, -30);
+		videoSprite.antialiasing = true;
+		videoSprite.bitmap.onFormatSetup.add(function()
 		{
-			GlobalVideo.get().updatePlayer();
-		}
-		GlobalVideo.get().show();
-
-		if (GlobalVideo.isWebm)
+			videoSprite.setGraphicSize(Std.int(videoSprite.width * 1.2));
+			videoSprite.updateHitbox();
+		});
+		videoSprite.bitmap.onEndReached.add(function()
 		{
-			GlobalVideo.get().restart();
-		}
-		else
-		{
-			GlobalVideo.get().play();
-		}
-
-		var data = webmHandler.webm.bitmapData;
-
-		videoSprite = new FlxSprite(-470, -30).loadGraphic(data);
-
-		videoSprite.setGraphicSize(Std.int(videoSprite.width * 1.2));
+			videoEnded = true;
+		});
 
 		remove(gf);
 		remove(boyfriend);
@@ -4962,12 +5001,49 @@ class PlayState extends MusicBeatState
 		add(boyfriend);
 		add(dad);
 
-		trace('poggers');
-
-		if (!songStarted)
-			webmHandler.pause();
+		if (videoSprite.load(source))
+		{
+			videoSprite.play();
+			if (!songStarted)
+				videoSprite.pause();
+		}
 		else
-			webmHandler.resume();
+			videoEnded = true;
+		#end
+	}
+
+	public function pauseVideo()
+	{
+		#if hxvlc
+		if (videoSprite != null)
+			videoSprite.pause();
+		#end
+	}
+
+	public function resumeVideo()
+	{
+		#if hxvlc
+		if (videoSprite != null)
+			videoSprite.resume();
+		#end
+	}
+
+	public function restartVideo()
+	{
+		#if hxvlc
+		if (videoSprite != null)
+		{
+			videoSprite.stop();
+			videoSprite.play();
+		}
+		#end
+	}
+
+	public function stopVideo()
+	{
+		#if hxvlc
+		if (videoSprite != null)
+			videoSprite.stop();
 		#end
 	}
 

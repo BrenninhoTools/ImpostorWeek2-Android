@@ -12,7 +12,7 @@ import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -39,8 +39,7 @@ class PauseSubState extends MusicBeatSubstate
 		if (PlayState.instance.useVideo)
 		{
 			menuItems.remove("Resume");
-			if (GlobalVideo.get().playing)
-				GlobalVideo.get().pause();
+			PlayState.instance.pauseVideo();
 		}
 
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
@@ -84,7 +83,7 @@ class PauseSubState extends MusicBeatSubstate
 		perSongOffset.scrollFactor.set();
 		perSongOffset.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		
-		#if cpp
+		#if (cpp && !mobile)
 			add(perSongOffset);
 		#end
 
@@ -99,7 +98,13 @@ class PauseSubState extends MusicBeatSubstate
 		changeSelection();
 
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+
+		#if mobile
+		addBackButton();
+		#end
 	}
+
+	var framesOpen:Int = 0;
 
 	override function update(elapsed:Float)
 	{
@@ -150,7 +155,7 @@ class PauseSubState extends MusicBeatSubstate
 			changeSelection(1);
 		}
 		
-		#if cpp
+		#if (cpp && !mobile)
 			else if (controls.LEFT_P || leftPcontroller)
 			{
 				oldOffset = PlayState.songOffset;
@@ -207,6 +212,14 @@ class PauseSubState extends MusicBeatSubstate
 			}
 		#end
 
+		framesOpen++;
+
+		if (controls.BACK && framesOpen > 1 && menuItems.contains("Resume"))
+		{
+			close();
+			return;
+		}
+
 		if (controls.ACCEPT && !FlxG.keys.pressed.ALT)
 		{
 			var daSelected:String = menuItems[curSelected];
@@ -219,7 +232,7 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.startTime = 0;
 					if (PlayState.instance.useVideo)
 					{
-						GlobalVideo.get().stop();
+						PlayState.instance.stopVideo();
 						PlayState.instance.remove(PlayState.instance.videoSprite);
 						PlayState.instance.removedVideo = true;
 					}
@@ -228,7 +241,7 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.startTime = 0;
 					if (PlayState.instance.useVideo)
 					{
-						GlobalVideo.get().stop();
+						PlayState.instance.stopVideo();
 						PlayState.instance.remove(PlayState.instance.videoSprite);
 						PlayState.instance.removedVideo = true;
 					}

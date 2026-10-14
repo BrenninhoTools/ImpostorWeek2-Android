@@ -1,7 +1,7 @@
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.FlxSprite;
 
 class AmongButton extends FlxSprite

@@ -40,7 +40,14 @@ class LoadReplayState extends MusicBeatState
 	{
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
         #if sys
-		controlsStrings = sys.FileSystem.readDirectory(Sys.getCwd() + "/assets/replays/");
+		try
+		{
+			controlsStrings = sys.FileSystem.readDirectory(mobile.StorageUtil.getReplayDirectory());
+		}
+		catch (e:Dynamic)
+		{
+			controlsStrings = [];
+		}
         #end
 		trace(controlsStrings);
 
@@ -102,6 +109,10 @@ class LoadReplayState extends MusicBeatState
 		add(poggerDetails);
 
 		changeSelection(0);
+
+		#if mobile
+		addBackButton();
+		#end
 
 		super.create();
 	}
