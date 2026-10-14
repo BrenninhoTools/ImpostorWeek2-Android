@@ -267,6 +267,7 @@ class PlayState extends MusicBeatState
 	var defaultCamZoom:Float = 1.05;
 
 	public static var daPixelZoom:Float = 6;
+	public static var noteScale:Float = 0.7;
 
 	public static var theFunne:Bool = true;
 
@@ -361,10 +362,17 @@ class PlayState extends MusicBeatState
 
 		PlayStateChangeables.useDownscroll = FlxG.save.data.downscroll;
 
+		noteScale = 0.7;
+
 		#if mobile
 		if (mobile.TouchInput.arrowsMode())
+		{
 			PlayStateChangeables.useDownscroll = true;
+			noteScale = 0.8;
+		}
 		#end
+
+		Note.swagWidth = 160 * noteScale;
 		PlayStateChangeables.safeFrames = FlxG.save.data.frames;
 		PlayStateChangeables.scrollSpeed = FlxG.save.data.scrollSpeed;
 		PlayStateChangeables.botPlay = FlxG.save.data.botplay;
@@ -2813,7 +2821,7 @@ class PlayState extends MusicBeatState
 						{
 							babyArrow.antialiasing = true;
 						}
-					babyArrow.setGraphicSize(Std.int(babyArrow.width * 0.7));
+					babyArrow.setGraphicSize(Std.int(babyArrow.width * noteScale));
 			}
 
 			babyArrow.updateHitbox();
@@ -4074,7 +4082,7 @@ class PlayState extends MusicBeatState
 
 				if (daNote.isSustainNote)
 				{
-					daNote.x += daNote.width / 2 + 20;
+					daNote.x += daNote.width / 2 + 20 * (noteScale / 0.7);
 					if (PlayState.curStage.startsWith('school'))
 						daNote.x -= 11;
 				}

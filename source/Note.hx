@@ -153,7 +153,7 @@ class Note extends FlxSprite
 						animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' tail'); // Tails
 					}
 
-					setGraphicSize(Std.int(width * 0.7));
+					setGraphicSize(Std.int(width * PlayState.noteScale));
 					updateHitbox();
 					
 					if(FlxG.save.data.antialiasing)
@@ -190,7 +190,7 @@ class Note extends FlxSprite
 		// and flip it so it doesn't look weird.
 		// THIS DOESN'T FUCKING FLIP THE NOTE, CONTRIBUTERS DON'T JUST COMMENT THIS OUT JESUS
 		// then what is this lol
-		if (FlxG.save.data.downscroll && sustainNote) 
+		if ((inCharter ? FlxG.save.data.downscroll : PlayStateChangeables.useDownscroll) && sustainNote) 
 			flipY = true;
 
 		var stepHeight = (0.45 * Conductor.stepCrochet * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? PlayState.SONG.speed : PlayStateChangeables.scrollSpeed, 2));

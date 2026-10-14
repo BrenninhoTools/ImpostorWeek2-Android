@@ -11,7 +11,7 @@ class Hitbox extends FlxSpriteGroup
 {
 	public static var laneColors:Array<FlxColor> = [0xFFC24B99, 0xFF00FFFF, 0xFF12FA05, 0xFFF9393F];
 
-	public static var arrowPositions:Array<Float> = [0.105, 0.296, 0.61, 0.807];
+	public static var arrowPositions:Array<Float> = [0.2, 0.34, 0.66, 0.8];
 
 	public var ownerState:FlxState;
 	public var arrows(default, null):Bool = false;
