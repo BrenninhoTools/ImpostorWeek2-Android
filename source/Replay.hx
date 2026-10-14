@@ -115,28 +115,25 @@ class Replay
 		
 		var time = Date.now().getTime();
 
-		#if sys
-		try
-		{
-			mobile.StorageUtil.init();
-			File.saveContent(mobile.StorageUtil.getReplayDirectory() + "replay-" + PlayState.SONG.song + "-time" + time + ".kadeReplay", data);
-		}
-		catch (e:Dynamic) {}
+		#if (sys && !mobile)
+		File.saveContent("assets/replays/replay-" + PlayState.SONG.song + "-time" + time + ".kadeReplay", data);
 
 		path = "replay-" + PlayState.SONG.song + "-time" + time + ".kadeReplay"; // for score screen shit
 
 		LoadFromJSON();
-
-		replay.ana = ana;
 		#end
+
+		if (replay != null)
+			replay.ana = ana;
 	}
 
 	public function LoadFromJSON()
 	{
-		#if sys
+		#if (sys && !mobile)
+		trace('loading ' + Sys.getCwd() + 'assets/replays/' + path + ' replay...');
 		try
 		{
-			var repl:ReplayJSON = cast Json.parse(File.getContent(mobile.StorageUtil.getReplayDirectory() + path));
+			var repl:ReplayJSON = cast Json.parse(File.getContent(Sys.getCwd() + "assets/replays/" + path));
 			replay = repl;
 		}
 		catch(e)

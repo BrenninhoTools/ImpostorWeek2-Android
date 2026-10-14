@@ -31,13 +31,6 @@ class Hitbox extends FlxSpriteGroup
 			lane.antialiasing = true;
 			lanes.push(lane);
 			add(lane);
-
-			if (i > 0)
-			{
-				var line:FlxSprite = new FlxSprite(laneWidth * i - 1, 0).makeGraphic(2, FlxG.height, FlxColor.WHITE);
-				line.alpha = 0.1;
-				add(line);
-			}
 		}
 
 		scrollFactor.set();

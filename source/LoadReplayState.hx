@@ -39,15 +39,8 @@ class LoadReplayState extends MusicBeatState
 	override function create()
 	{
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-        #if sys
-		try
-		{
-			controlsStrings = sys.FileSystem.readDirectory(mobile.StorageUtil.getReplayDirectory());
-		}
-		catch (e:Dynamic)
-		{
-			controlsStrings = [];
-		}
+        #if (sys && !mobile)
+		controlsStrings = sys.FileSystem.readDirectory(Sys.getCwd() + "/assets/replays/");
         #end
 		trace(controlsStrings);
 
