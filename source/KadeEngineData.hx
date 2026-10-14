@@ -9,6 +9,15 @@ class KadeEngineData
         if (FlxG.save.data.weekUnlocked == null)
 			FlxG.save.data.weekUnlocked = 7;
 
+		if (FlxG.save.data.invisibleHitbox == null)
+			FlxG.save.data.invisibleHitbox = false;
+
+		if (FlxG.save.data.unlockAll == null)
+			FlxG.save.data.unlockAll = false;
+
+		if (FlxG.save.data.storyCompleted == null)
+			FlxG.save.data.storyCompleted = false;
+
 		if (FlxG.save.data.newInput == null)
 			FlxG.save.data.newInput = true;
 

@@ -805,6 +805,62 @@ class CamZoomOption extends Option
 	}
 }
 
+class InvisibleHitboxOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.invisibleHitbox = !FlxG.save.data.invisibleHitbox;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Invisible Hitbox " + (FlxG.save.data.invisibleHitbox ? "on" : "off");
+	}
+}
+
+class UnlockAllOption extends Option
+{
+	var notCompleted:Bool = false;
+
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function press():Bool
+	{
+		if (FlxG.save.data.storyCompleted != true)
+		{
+			notCompleted = true;
+			FlxG.save.data.unlockAll = false;
+			display = updateDisplay();
+			return true;
+		}
+
+		notCompleted = false;
+		FlxG.save.data.unlockAll = !FlxG.save.data.unlockAll;
+		FlxG.save.flush();
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		if (notCompleted)
+			return "Beat Story Mode First";
+		return "Unlock All " + (FlxG.save.data.unlockAll == true ? "on" : "off");
+	}
+}
+
 class LockWeeksOption extends Option
 {
 	var confirm:Bool = false;

@@ -88,6 +88,9 @@ class FreeplayState extends MusicBeatState
 	{
 		var initSonglist = CoolUtil.coolTextFile(Paths.txt('data/freeplaySonglist'));
 
+		if (StoryMenuState.isEverythingUnlocked() && !initSonglist.contains('Defeat:black:4'))
+			initSonglist.push('Defeat:black:4');
+
 		//var diffList = "";
 
 		songData = [];
@@ -344,6 +347,8 @@ class FreeplayState extends MusicBeatState
 
 	static function chartExists(path:String):Bool
 	{
+		path = path.toLowerCase();
+
 		#if mobile
 		return openfl.utils.Assets.exists(path);
 		#elseif sys

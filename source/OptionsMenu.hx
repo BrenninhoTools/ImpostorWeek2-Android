@@ -76,6 +76,13 @@ class OptionsMenu extends MusicBeatState
 			new BotPlay("Showcase your charts and mods with autoplay.")
 		]),
 		
+		#if mobile
+		new OptionCategory("Mobile Options", [
+			new InvisibleHitboxOption("Makes the hitbox lanes invisible, even when pressed."),
+			new UnlockAllOption("Unlocks every week and song after you beat Story Mode.")
+		]),
+		#end
+
 		new OptionCategory("Saves and Data", [
 			#if desktop
 			new ReplayOption("View saved song replays."),

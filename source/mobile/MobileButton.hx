@@ -38,7 +38,7 @@ class MobileButton extends FlxSprite
 
 		antialiasing = true;
 		scrollFactor.set();
-		setGraphicSize(Std.int(frameWidth * (type == BACK ? 0.5 : 0.85)));
+		setGraphicSize(Std.int(frameWidth * (type == BACK ? 0.75 : 0.85)));
 		updateHitbox();
 
 		switch (type)

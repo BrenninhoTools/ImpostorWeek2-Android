@@ -90,6 +90,13 @@ class StoryMenuState extends MusicBeatState
 		return weeks;
 		#end
 		
+		if (isEverythingUnlocked())
+		{
+			for (i in 0...weekData().length)
+				weeks.push(true);
+			return weeks;
+		}
+
 		weeks.push(true);
 
 		for(i in 0...FlxG.save.data.weekUnlocked)
@@ -734,8 +741,16 @@ class StoryMenuState extends MusicBeatState
 		#end
 	}
 
+	public static function isEverythingUnlocked():Bool
+	{
+		return FlxG.save.data.unlockAll == true && FlxG.save.data.storyCompleted == true;
+	}
+
 	public static function unlockNextWeek(week:Int):Void
 	{
+		if (week >= weekData().length - 2)
+			FlxG.save.data.storyCompleted = true;
+
 		if(week <= weekData().length - 1 && FlxG.save.data.weekUnlocked == week)
 		{
 			weekUnlocked.push(true);

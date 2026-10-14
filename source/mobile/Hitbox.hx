@@ -43,7 +43,7 @@ class Hitbox extends FlxSpriteGroup
 
 		for (i in 0...lanes.length)
 		{
-			var target:Float = TouchInput.hitboxHeld[i] ? 0.35 : 0;
+			var target:Float = (TouchInput.hitboxHeld[i] && FlxG.save.data.invisibleHitbox != true) ? 0.35 : 0;
 			lanes[i].alpha += (target - lanes[i].alpha) * Math.min(1, elapsed * 20);
 		}
 	}
