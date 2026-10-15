@@ -15,6 +15,9 @@ class KadeEngineData
 		if (FlxG.save.data.hitboxMode == null)
 			FlxG.save.data.hitboxMode = 'lanes';
 
+		if (FlxG.save.data.screenStyle == null)
+			FlxG.save.data.screenStyle = 'original';
+
 		if (FlxG.save.data.unlockAll == null)
 			FlxG.save.data.unlockAll = false;
 
@@ -136,5 +139,9 @@ class KadeEngineData
 
 		(cast (Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
 		(cast (Lib.current.getChildAt(0), Main)).toggleFPS(FlxG.save.data.fps);
+
+		#if mobile
+		mobile.ScreenUtil.apply();
+		#end
 	}
 }

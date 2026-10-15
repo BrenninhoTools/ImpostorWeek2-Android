@@ -78,6 +78,7 @@ class OptionsMenu extends MusicBeatState
 		
 		#if mobile
 		new OptionCategory("Mobile Options", [
+			new ScreenStyleOption("Original keeps the 16:9 screen. Full fills the screen up to 20:9 without stretching."),
 			new HitboxModeOption("Four Lanes splits the screen in four. Arrows lets you tap the arrows at the bottom of the screen."),
 			new InvisibleHitboxOption("Makes the hitbox lanes invisible, even when pressed."),
 			new UnlockAllOption("Unlocks every week and song after you beat Story Mode.")

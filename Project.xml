@@ -168,6 +168,8 @@
 		<architecture exclude="armv7" />
 		<architecture exclude="x86" />
 		<architecture exclude="x64" />
+		<java path="android/java" />
+		<config:android extension="org.haxe.extension.ScreenStyle" />
 		<config:android target-sdk-version="35" />
 		<config:android minimum-sdk-version="24" />
 	</section>

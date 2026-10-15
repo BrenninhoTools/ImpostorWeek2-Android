@@ -2857,7 +2857,7 @@ class PlayState extends MusicBeatState
 
 			#if mobile
 			if (player == 1 && mobile.TouchInput.arrowsMode())
-				babyArrow.x = FlxG.width * mobile.Hitbox.arrowPositions[i] - babyArrow.width / 2;
+				babyArrow.x = mobile.Hitbox.arrowX(i) - babyArrow.width / 2;
 			#end
 
 			cpuStrums.forEach(function(spr:FlxSprite)

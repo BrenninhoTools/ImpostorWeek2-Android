@@ -13,6 +13,11 @@ class Hitbox extends FlxSpriteGroup
 
 	public static var arrowPositions:Array<Float> = [0.2, 0.34, 0.66, 0.8];
 
+	public static function arrowX(index:Int):Float
+	{
+		return ScreenUtil.centeredX(ScreenUtil.BASE_WIDTH * arrowPositions[index]);
+	}
+
 	public var ownerState:FlxState;
 	public var arrows(default, null):Bool = false;
 
@@ -52,7 +57,7 @@ class Hitbox extends FlxSpriteGroup
 			var closestDistance:Float = Math.POSITIVE_INFINITY;
 			for (i in 0...arrowPositions.length)
 			{
-				var distance:Float = Math.abs(x - FlxG.width * arrowPositions[i]);
+				var distance:Float = Math.abs(x - arrowX(i));
 				if (distance < closestDistance)
 				{
 					closestDistance = distance;

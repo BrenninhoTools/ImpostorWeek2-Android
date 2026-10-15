@@ -826,6 +826,32 @@ class InvisibleHitboxOption extends Option
 	}
 }
 
+class ScreenStyleOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.screenStyle = FlxG.save.data.screenStyle == 'full' ? 'original' : 'full';
+		FlxG.save.flush();
+		#if mobile
+		mobile.ScreenUtil.apply();
+		FlxG.resetState();
+		#end
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Screen Style " + (FlxG.save.data.screenStyle == 'full' ? "Full" : "Original");
+	}
+}
+
 class HitboxModeOption extends Option
 {
 	public function new(desc:String)
